@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+server/node_modules/
+
+# Build outputs
+frontend/dist/
+server/dist/
+
+# Environment files
+.env
+frontend/.env
+server/.env
+*.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Prisma
+server/prisma/migrations/
+
+# PWA
+frontend/dist/sw.js
+frontend/dist/workbox-*.js

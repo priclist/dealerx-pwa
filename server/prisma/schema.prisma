@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  SALES_MANAGER
+  SALES_AGENT
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  SOLD
+  RESERVED
+}
+
+enum VehicleCategory {
+  TRUCK
+  TRAILER
+  EQUIPMENT
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  NEGOTIATION
+  WON
+  LOST
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(SALES_AGENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  leads     Lead[]
+  sales     Sale[]
+  activities Activity[]
+}
+
+model Vehicle {
+  id        String          @id @default(cuid())
+  name      String
+  brand     String
+  category  VehicleCategory
+  price     Float
+  buyPrice  Float           @default(0)
+  condition String          @default("Used")
+  kmHours   Int             @default(0)
+  year      Int
+  status    VehicleStatus   @default(AVAILABLE)
+  images    String[]
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  sales     Sale[]
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  company     String?
+  email       String?
+  phone       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  leads       Lead[]
+  sales       Sale[]
+}
+
+model Lead {
+  id         String     @id @default(cuid())
+  status     LeadStatus @default(NEW)
+  value      Float      @default(0)
+  notes      String?
+  customerId String
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  agentId    String?
+  agent      User?      @relation(fields: [agentId], references: [id])
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Sale {
+  id         String   @id @default(cuid())
+  vehicleId  String
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  agentId    String
+  agent      User     @relation(fields: [agentId], references: [id])
+  sellPrice  Float
+  buyPrice   Float
+  margin     Float
+  notes      String?
+  soldAt     DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String
+  title     String
+  body      String?
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}

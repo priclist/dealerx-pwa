@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
+import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Inventory from './pages/Inventory'
 import Sales from './pages/Sales'
@@ -12,12 +13,20 @@ import Tasks from './pages/Tasks'
 import Calendar from './pages/Calendar'
 import Messages from './pages/Messages'
 import Settings from './pages/Settings'
+import { useStore } from './store/useStore'
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { token } = useStore()
+  if (!token) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/inventory/new" element={<Inventory />} />

@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Package, DollarSign, Users, Handshake,
   UserPlus, BarChart2, Bot, CheckSquare, Calendar,
-  MessageSquare, Settings, ChevronDown, Truck, X
+  MessageSquare, Settings, LogOut, Truck, X
 } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 
@@ -29,7 +29,13 @@ const quickActions = [
 ]
 
 export default function Sidebar() {
-  const { user, sidebarCollapsed, toggleSidebar, darkMode } = useStore()
+  const { user, sidebarCollapsed, toggleSidebar, darkMode, logout } = useStore()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <>
@@ -102,15 +108,21 @@ export default function Sidebar() {
         </div>
 
         <div className={`px-4 py-3 border-t ${darkMode ? 'border-[#2a2a2e]' : 'border-gray-100'}`}>
-          <div className="flex items-center gap-2.5 cursor-pointer group">
+          <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-              {user?.name?.charAt(0)}
+              {user?.name?.charAt(0) ?? '?'}
             </div>
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.name}</p>
               <p className={`text-xs truncate ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{user?.role}</p>
             </div>
-            <ChevronDown className={`w-4 h-4 flex-shrink-0 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+            <button
+              onClick={handleLogout}
+              title="Sign out"
+              className={`p-1.5 rounded-lg transition-colors flex-shrink-0 ${darkMode ? 'text-gray-600 hover:text-red-400 hover:bg-[#1c1c20]' : 'text-gray-400 hover:text-red-500 hover:bg-gray-100'}`}
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>

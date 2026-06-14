@@ -10,8 +10,17 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f5f5f7;
+  background: #ffffff;
   color: #1d1d1f;
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+.typing-dot {
+  animation: typingBounce 1.2s infinite ease-in-out;
 }
 
 #root {

@@ -42,7 +42,7 @@ export default function SalesChart() {
           <YAxis tick={{ fontSize: 11, fill: darkMode ? '#555' : '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v/1000).toFixed(0)}k`} />
           <Tooltip
             contentStyle={{ background: darkMode ? '#1c1c20' : '#fff', border: 'none', borderRadius: 12, fontSize: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
-            formatter={(v: number) => [`$${v.toLocaleString()}`, 'Revenue']}
+            formatter={(v: any) => [`$${Number(v).toLocaleString()}`, 'Revenue']}
           />
           <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2.5} fill="url(#salesGrad)" dot={false} />
         </AreaChart>

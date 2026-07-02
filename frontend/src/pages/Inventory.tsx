@@ -37,9 +37,9 @@ export default function Inventory() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api.get('/vehicles')
-      .then((data: any[]) => {
-        const mapped = data.map((v: any) => ({
+    api.get<Vehicle[]>('/vehicles')
+      .then((data) => {
+        const mapped = data.map((v) => ({
           ...v,
           category: toTitleCase(v.category) as Category,
           status: toTitleCase(v.status) as Status,

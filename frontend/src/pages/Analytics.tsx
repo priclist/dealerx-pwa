@@ -82,7 +82,7 @@ export default function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" stroke={grid} />
                 <XAxis type="number" tick={tick} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
                 <YAxis dataKey="name" type="category" tick={tick} axisLine={false} tickLine={false} width={70} />
-                <Tooltip contentStyle={{ background: darkMode ? '#1c1c20' : '#fff', border: 'none', borderRadius: 12, fontSize: 12 }} formatter={(v: number) => [`$${v.toLocaleString()}`, 'Revenue']} />
+                <Tooltip contentStyle={{ background: darkMode ? '#1c1c20' : '#fff', border: 'none', borderRadius: 12, fontSize: 12 }} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, 'Revenue']} />
                 <Bar dataKey="revenue" fill="#8b5cf6" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>

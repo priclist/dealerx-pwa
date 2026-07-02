@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const API_URL = env.VITE_API_URL || 'http://127.0.0.1:3013'
 
   return {
+  base: '/dealerx-pwa/',
   plugins: [
     react(),
     tailwindcss(),

@@ -32,7 +32,7 @@ export default function Sales() {
                 <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#1f1f23' : '#f3f4f6'} />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: darkMode ? '#555' : '#9ca3af' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: darkMode ? '#555' : '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={{ background: darkMode ? '#1c1c20' : '#fff', border: 'none', borderRadius: 12, fontSize: 12 }} formatter={(v: number) => [`$${v.toLocaleString()}`, 'Revenue']} />
+                <Tooltip contentStyle={{ background: darkMode ? '#1c1c20' : '#fff', border: 'none', borderRadius: 12, fontSize: 12 }} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, 'Revenue']} />
                 <Bar dataKey="revenue" fill="#3b82f6" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

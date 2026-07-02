@@ -38,8 +38,8 @@ export default function Leads() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api.get('/leads')
-      .then((data: any[]) => {
+    api.get<Lead[]>('/leads')
+      .then((data) => {
         setLeads(data)
         setLoading(false)
       })

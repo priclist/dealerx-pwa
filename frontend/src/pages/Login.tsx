@@ -351,7 +351,7 @@ export default function Login() {
 
         {/* Center branding */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 14 }}>
-          <img src="/logo-x.png" alt="CarX" style={{ width: 180, height: 180, objectFit: 'contain' }} />
+          <img src={`${import.meta.env.BASE_URL}logo-x.png`} alt="CarX" style={{ width: 180, height: 180, objectFit: 'contain' }} />
           <p style={{ fontSize: 18, fontWeight: 600, color: '#555', lineHeight: 1.3, margin: 0 }}>
             Empowering the next generation of car sales
           </p>

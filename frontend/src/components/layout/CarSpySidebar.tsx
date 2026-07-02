@@ -56,7 +56,7 @@ export default function CarSpySidebar({ onClose }: Props) {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <img
-            src="/carsx-logo.png"
+            src={`${import.meta.env.BASE_URL}carsx-logo.png`}
             alt="CarsX"
             style={{ height: 32, width: 'auto', display: 'block' }}
           />

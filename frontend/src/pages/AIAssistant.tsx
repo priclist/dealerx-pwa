@@ -72,7 +72,7 @@ export default function AIAssistant() {
         {messages.length === 0 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
             <div className="w-16 h-16 rounded-2xl bg-black flex items-center justify-center mb-4 shadow-lg">
-              <img src="/carsx-logo.png" alt="carsX" style={{ height: 40, width: 'auto', display: 'block' }} />
+              <img src={`${import.meta.env.BASE_URL}carsx-logo.png`} alt="carsX" style={{ height: 40, width: 'auto', display: 'block' }} />
             </div>
             <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               Hi {user?.name?.split(' ')[0]}, I'm carsX

@@ -70,7 +70,7 @@ export default function AppLayout() {
           )}
 
           <img
-            src="/carsx-logo.png"
+            src={`${import.meta.env.BASE_URL}carsx-logo.png`}
             alt="CarsX"
             style={{ height: '32px', width: 'auto', display: 'block' }}
           />

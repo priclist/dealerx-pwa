@@ -1,6 +1,17 @@
 import { useState } from 'react'
-import { Bot, Send, Mic, MoreHorizontal, Sparkles } from 'lucide-react'
+import { Send, Mic, MoreHorizontal } from 'lucide-react'
 import { useStore } from '../../store/useStore'
+
+function RedXLogo({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none">
+      <polygon points="0,20 35,50 0,80" fill="#dc2626" />
+      <polygon points="30,0 65,30 100,0" fill="#ef4444" />
+      <polygon points="35,50 65,80 30,100" fill="#b91c1c" />
+      <polygon points="65,30 100,60 65,80" fill="#f87171" />
+    </svg>
+  )
+}
 
 const quickPrompts = [
   'Show me sales performance',
@@ -31,8 +42,8 @@ export default function AIAssistantPanel() {
     <div className={`rounded-2xl border flex flex-col h-full min-h-[420px] ${darkMode ? 'bg-[#111114] border-[#2a2a2e]' : 'bg-white border-gray-100'}`}>
       <div className={`flex items-center justify-between px-5 py-4 border-b ${darkMode ? 'border-[#2a2a2e]' : 'border-gray-100'}`}>
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
+          <div className="w-7 h-7 rounded-xl bg-black flex items-center justify-center">
+            <RedXLogo size={18} />
           </div>
           <span className={`text-sm font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>AI Assistant</span>
         </div>
@@ -53,7 +64,7 @@ export default function AIAssistantPanel() {
                   onClick={() => send(p)}
                   className={`w-full text-left text-xs px-3 py-2.5 rounded-xl border flex items-center gap-2 transition-colors ${darkMode ? 'border-[#2a2a2e] text-gray-300 hover:bg-[#1c1c20]' : 'border-gray-100 text-gray-600 hover:bg-gray-50'}`}
                 >
-                  <Bot className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+                  <RedXLogo size={14} />
                   {p}
                 </button>
               ))}

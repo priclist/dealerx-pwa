@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Package, DollarSign, Users, Handshake,
-  UserPlus, BarChart2, Bot, CheckSquare, Calendar,
+  UserPlus, Bot, CheckSquare, Calendar,
   MessageSquare, Settings, LogOut, Truck, X
 } from 'lucide-react'
 import { useStore } from '../../store/useStore'
+import { useAuthStore } from '../../store/authStore'
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/' },
@@ -13,7 +14,6 @@ const navItems = [
   { icon: Users, label: 'Customers', path: '/customers' },
   { icon: Handshake, label: 'Deals', path: '/deals' },
   { icon: UserPlus, label: 'Leads', path: '/leads' },
-  { icon: BarChart2, label: 'Analytics', path: '/analytics' },
   { icon: Bot, label: 'AI Assistant', path: '/ai' },
   { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
   { icon: Calendar, label: 'Calendar', path: '/calendar' },
@@ -29,11 +29,12 @@ const quickActions = [
 ]
 
 export default function Sidebar() {
-  const { user, sidebarCollapsed, toggleSidebar, darkMode, logout } = useStore()
+  const { sidebarCollapsed, toggleSidebar, darkMode } = useStore()
+  const { user, logout } = useAuthStore()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/login')
   }
 

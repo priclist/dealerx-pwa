@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Search, Truck, Edit, Trash2 } from 'lucide-react'
 import TopBar from '../components/layout/TopBar'
 import { useStore } from '../store/useStore'
+import api from '../lib/api'
 
 type Status = 'Available' | 'Sold' | 'Reserved'
 type Category = 'Truck' | 'Trailer' | 'Equipment'
@@ -12,20 +13,10 @@ interface Vehicle {
   brand: string
   category: Category
   price: number
-  condition: 'New' | 'Used'
-  km: number
+  condition: string
+  hoursKm: number
   status: Status
-  year: number
 }
-
-const mockVehicles: Vehicle[] = [
-  { id: '1', name: 'Cascadia', brand: 'Freightliner', category: 'Truck', price: 145000, condition: 'New', km: 0, status: 'Available', year: 2024 },
-  { id: '2', name: 'Peterbilt 579', brand: 'Peterbilt', category: 'Truck', price: 135000, condition: 'Used', km: 120000, status: 'Available', year: 2022 },
-  { id: '3', name: '53\' Dry Van', brand: 'Utility', category: 'Trailer', price: 48000, condition: 'New', km: 0, status: 'Reserved', year: 2024 },
-  { id: '4', name: 'Reefer Trailer', brand: 'Great Dane', category: 'Trailer', price: 65000, condition: 'Used', km: 80000, status: 'Sold', year: 2021 },
-  { id: '5', name: 'Volvo VNL 860', brand: 'Volvo', category: 'Truck', price: 160000, condition: 'New', km: 0, status: 'Available', year: 2024 },
-  { id: '6', name: 'CAT 320', brand: 'Caterpillar', category: 'Equipment', price: 280000, condition: 'Used', km: 4500, status: 'Available', year: 2020 },
-]
 
 const statusColors: Record<Status, string> = {
   Available: 'bg-emerald-100 text-emerald-700',
@@ -33,13 +24,37 @@ const statusColors: Record<Status, string> = {
   Reserved: 'bg-amber-100 text-amber-700',
 }
 
+function toTitleCase(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
+
 export default function Inventory() {
   const { darkMode } = useStore()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<string>('All')
+  const [vehicles, setVehicles] = useState<Vehicle[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    api.get('/vehicles')
+      .then((data: any[]) => {
+        const mapped = data.map((v: any) => ({
+          ...v,
+          category: toTitleCase(v.category) as Category,
+          status: toTitleCase(v.status) as Status,
+        }))
+        setVehicles(mapped)
+        setLoading(false)
+      })
+      .catch((err: any) => {
+        setError(err instanceof Error ? err.message : 'Failed to load vehicles')
+        setLoading(false)
+      })
+  }, [])
 
   const categories = ['All', 'Truck', 'Trailer', 'Equipment']
-  const filtered = mockVehicles.filter(v =>
+  const filtered = vehicles.filter(v =>
     (filter === 'All' || v.category === filter) &&
     (v.name.toLowerCase().includes(search.toLowerCase()) || v.brand.toLowerCase().includes(search.toLowerCase()))
   )
@@ -63,15 +78,16 @@ export default function Inventory() {
           </button>
         </div>
 
+        {loading && <p className={`text-sm mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading vehicles...</p>}
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <div className={`rounded-2xl border overflow-hidden ${darkMode ? 'bg-[#111114] border-[#2a2a2e]' : 'bg-white border-gray-100'}`}>
           <table className="w-full">
             <thead>
               <tr className={`text-left text-xs font-semibold uppercase tracking-wider border-b ${darkMode ? 'border-[#2a2a2e] text-gray-500' : 'border-gray-100 text-gray-400'}`}>
                 <th className="px-5 py-3">Vehicle</th>
                 <th className="px-5 py-3">Category</th>
-                <th className="px-5 py-3">Year</th>
                 <th className="px-5 py-3">Condition</th>
-                <th className="px-5 py-3">KM/Hours</th>
+                <th className="px-5 py-3">Hours/KM</th>
                 <th className="px-5 py-3">Price</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3"></th>
@@ -92,9 +108,8 @@ export default function Inventory() {
                     </div>
                   </td>
                   <td className="px-5 py-3.5"><span className={`text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{v.category}</span></td>
-                  <td className="px-5 py-3.5"><span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{v.year}</span></td>
                   <td className="px-5 py-3.5"><span className={`text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{v.condition}</span></td>
-                  <td className="px-5 py-3.5"><span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{v.km.toLocaleString()}</span></td>
+                  <td className="px-5 py-3.5"><span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{v.hoursKm.toLocaleString()}</span></td>
                   <td className="px-5 py-3.5"><span className={`text-sm font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>${v.price.toLocaleString()}</span></td>
                   <td className="px-5 py-3.5"><span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusColors[v.status]}`}>{v.status}</span></td>
                   <td className="px-5 py-3.5">

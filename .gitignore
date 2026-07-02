@@ -9,7 +9,7 @@ server/dist/
 
 # Environment files
 .env
-frontend/.env
+# frontend/.env
 server/.env
 *.env.local
 

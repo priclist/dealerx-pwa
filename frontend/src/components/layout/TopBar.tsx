@@ -1,8 +1,10 @@
 import { Bell, MessageSquare, Plus, Search, Sun, Moon, Menu, ChevronDown } from 'lucide-react'
 import { useStore } from '../../store/useStore'
+import { useAuthStore } from '../../store/authStore'
 
 export default function TopBar({ title, subtitle }: { title: string; subtitle?: string }) {
-  const { user, darkMode, toggleDarkMode, toggleSidebar } = useStore()
+  const { darkMode, toggleDarkMode, toggleSidebar } = useStore()
+  const { user } = useAuthStore()
 
   const greeting = () => {
     const h = new Date().getHours()

@@ -5,6 +5,8 @@ interface User {
   name: string
   email: string
   role: string
+  businessName?: string
+  logo?: string
   avatar?: string
 }
 

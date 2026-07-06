@@ -74,30 +74,29 @@ router.post('/query', async (req: AuthRequest, res: Response): Promise<void> => 
       recentActivity: activities.map((a: any) => `${a.type}: ${a.title}${a.body ? ` — ${a.body}` : ''}`),
     }
 
-    // Try AI-powered response via OpenClaw Gateway
+    // Try AI-powered response (multiple backends fall through)
     let aiAnswer: string | null = null
-    try {
-      const gatewayUrl = process.env.OPENCLAW_GATEWAY_URL || 'http://localhost:18789'
-      const gatewayToken = process.env.OPENCLAW_GATEWAY_TOKEN
 
-      if (gatewayToken) {
-        const aiResponse = await fetch(`${gatewayUrl}/api/chat/completions`, {
+    // 1) Try direct OpenAI-compatible API (local LLM, LM Studio, Ollama, etc.)
+    const aiApiUrl = process.env.AI_API_URL
+    const aiApiKey = process.env.AI_API_KEY
+
+    if (aiApiUrl && aiApiKey) {
+      try {
+        const aiResponse = await fetch(aiApiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${gatewayToken}`,
+            'Authorization': `Bearer ${aiApiKey}`,
           },
           body: JSON.stringify({
-            model: process.env.OPENCLAW_AI_MODEL || 'default',
+            model: process.env.AI_MODEL || 'gpt-4o-mini',
             messages: [
               {
                 role: 'system',
-                content: `You are carsX, an intelligent AI dealership assistant embedded in the DealerX app. 
-Answer the user's question concisely and informatively using ONLY the provided context data.
-If you don't know something or the data doesn't contain the answer, say so.
-Keep answers under 200 words. Be data-driven and use numbers.
+                content: `You are carsX, an intelligent AI dealership assistant. Answer concisely using ONLY the provided data. Keep answers under 200 words.
 
-Current dealership context: ${JSON.stringify(context)}`,
+Dealership context: ${JSON.stringify(context)}`,
               },
               { role: 'user', content: query },
             ],
@@ -110,9 +109,46 @@ Current dealership context: ${JSON.stringify(context)}`,
           const data = await aiResponse.json()
           aiAnswer = data?.choices?.[0]?.message?.content || null
         }
+      } catch (err) {
+        console.warn('[AI] Direct API unavailable:', err instanceof Error ? err.message : err)
       }
-    } catch (err) {
-      console.warn('[AI] Gateway unavailable, using fallback:', err instanceof Error ? err.message : err)
+    }
+
+    // 2) Try OpenClaw Gateway (if direct API didn't work)
+    if (!aiAnswer) {
+      try {
+        const gatewayToken = process.env.OPENCLAW_GATEWAY_TOKEN
+        if (gatewayToken) {
+          const aiResponse = await fetch('http://localhost:18789/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${gatewayToken}`,
+            },
+            body: JSON.stringify({
+              model: process.env.OPENCLAW_AI_MODEL || 'deepseek/deepseek-v4-flash',
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are carsX, an intelligent AI dealership assistant. Answer concisely using ONLY the provided data. Keep answers under 200 words.
+
+Dealership context: ${JSON.stringify(context)}`,
+                },
+                { role: 'user', content: query },
+              ],
+              max_tokens: 500,
+              temperature: 0.3,
+            }),
+          })
+
+          if (aiResponse.ok) {
+            const data = await aiResponse.json()
+            aiAnswer = data?.choices?.[0]?.message?.content || null
+          }
+        }
+      } catch (err) {
+        console.warn('[AI] Gateway unavailable:', err instanceof Error ? err.message : err)
+      }
     }
 
     // Use AI answer if we got one

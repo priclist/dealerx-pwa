@@ -109,6 +109,114 @@ model Sale {
   updatedAt  DateTime @updatedAt
 }
 
+enum ListingSource {
+  CARS_CO_ZA
+  WEBUYCARS
+  CARFIND
+  WEELI
+  FACEBOOK_MARKETPLACE
+  OTHER
+}
+
+enum ListingStatus {
+  NEW
+  SEEN
+  PRICE_DROPPED
+  SOLD
+  IGNORED
+}
+
+model CarSpySource {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  label     String
+  baseUrl   String
+  icon      String?
+  enabled   Boolean  @default(true)
+  interval  Int      @default(360) // minutes between scrapes
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listings  CarSpyListing[]
+  runs      CarSpyScrapeRun[]
+}
+
+model CarSpyListing {
+  id             String         @id @default(cuid())
+  title          String
+  source         ListingSource
+  sourceId       String?        @unique // original listing ID from the source
+  sourceUrl      String?
+  sourceName     String?
+  price          Float
+  originalPrice  Float?
+  year           Int?
+  mileage        Int?
+  location       String?
+  description    String?
+  imageUrl       String?
+  sellerName     String?
+  sellerPhone    String?
+  status         ListingStatus  @default(NEW)
+  category       String?        @default("OTHER")
+  brand          String?
+  model          String?
+  isGoodDeal     Boolean        @default(false)
+  dealScore      Float?         @default(0)
+  notes          String?
+  firstSeenAt    DateTime       @default(now())
+  lastSeenAt     DateTime       @updatedAt
+  priceChangedAt DateTime?
+  sourceIdRef    String?
+  sourceRel      CarSpySource?  @relation(fields: [sourceIdRef], references: [id])
+  alerts         CarSpyAlert[]
+
+  @@unique([source, sourceId])
+  @@index([status])
+  @@index([isGoodDeal])
+  @@index([price])
+}
+
+model CarSpyScrapeRun {
+  id          String         @id @default(cuid())
+  sourceId    String?
+  source      CarSpySource?  @relation(fields: [sourceId], references: [id])
+  status      String         @default("running") // running, completed, failed
+  listingsFound   Int        @default(0)
+  listingsNew     Int        @default(0)
+  listingsUpdated Int        @default(0)
+  error       String?
+  startedAt   DateTime       @default(now())
+  completedAt DateTime?
+  createdAt   DateTime       @default(now())
+}
+
+model CarSpyAlert {
+  id         String        @id @default(cuid())
+  listingId  String
+  listing    CarSpyListing @relation(fields: [listingId], references: [id])
+  type       String        @default("good_deal") // good_deal, price_drop, new_listing
+  message    String
+  sent       Boolean       @default(false)
+  read       Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+}
+
+model CarSpyFilter {
+  id          String   @id @default(cuid())
+  name        String
+  enabled     Boolean  @default(true)
+  minYear     Int?
+  maxPrice    Float?
+  minPrice    Float?
+  maxMileage  Int?
+  brands      String?  // comma-separated
+  categories  String?  // comma-separated
+  minDealScore Float?  @default(70)
+  notifyTelegram Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Activity {
   id        String   @id @default(cuid())
   type      String

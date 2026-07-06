@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Package, DollarSign, Users, Handshake,
   UserPlus, Bot, CheckSquare, Calendar,
-  MessageSquare, Settings, LogOut, Truck, X
+  MessageSquare, Settings, LogOut, Truck, X, Search
 } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { useAuthStore } from '../../store/authStore'
@@ -14,6 +14,7 @@ const navItems = [
   { icon: Users, label: 'Customers', path: '/customers' },
   { icon: Handshake, label: 'Deals', path: '/deals' },
   { icon: UserPlus, label: 'Leads', path: '/leads' },
+  { icon: Search, label: 'CarSpy', path: '/carspy' },
   { icon: Bot, label: 'AI Assistant', path: '/ai' },
   { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
   { icon: Calendar, label: 'Calendar', path: '/calendar' },

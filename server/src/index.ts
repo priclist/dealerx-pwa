@@ -11,6 +11,8 @@ import saleRoutes from './routes/sales'
 import customerRoutes from './routes/customers'
 import dashboardRoutes from './routes/dashboard'
 import aiRoutes from './routes/ai'
+import carSpyRoutes from './routes/carspy'
+import { carSpyService } from './services/carspy/service'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -29,13 +31,21 @@ app.use('/api/sales', saleRoutes)
 app.use('/api/customers', customerRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/carspy', carSpyRoutes)
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
 
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 DealerX API running on http://localhost:${PORT}`)
+  // Seed CarSpy defaults
+  try {
+    await carSpyService.seedDefaults()
+    console.log('✅ CarSpy defaults seeded')
+  } catch (err) {
+    console.warn('⚠️ Could not seed CarSpy defaults:', err instanceof Error ? err.message : err)
+  }
 })
 
 export default app

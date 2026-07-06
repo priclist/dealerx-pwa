@@ -9,6 +9,7 @@ import Sales from './pages/Sales'
 import Customers from './pages/Customers'
 import Deals from './pages/Deals'
 import Leads from './pages/Leads'
+import CarSpy from './pages/CarSpy'
 import AIAssistant from './pages/AIAssistant'
 import Tasks from './pages/Tasks'
 import Calendar from './pages/Calendar'
@@ -33,6 +34,7 @@ function App() {
             <Route path="/deals/new" element={<Deals />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/leads/new" element={<Leads />} />
+            <Route path="/carspy" element={<CarSpy />} />
             <Route path="/ai" element={<AIAssistant />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/calendar" element={<Calendar />} />

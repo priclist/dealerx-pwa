@@ -43,10 +43,10 @@ export default function AIAssistant() {
     setInput('')
     setLoading(true)
     try {
-      const data = await api.post<{ answer: string }>('/ai/query', { query: text })
+      const data = await api.post<{ response: string; mode?: string }>('/ai/query', { query: text })
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: data.answer,
+        content: data.response,</parameter>
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }])
     } catch {
